@@ -243,7 +243,7 @@ public class BaseIconFactory implements AutoCloseable {
             // Need to convert to Adaptive Icon with insets to avoid cropping.
             tempIcon = createShapedAdaptiveIcon(bitmapDrawable.getBitmap());
         }
-        icon = normalizeAndWrapToAdaptiveIcon(tempIcon, null, scale);
+        tempIcon = normalizeAndWrapToAdaptiveIcon(tempIcon, null, scale);
         Bitmap bitmap = createIconBitmap(tempIcon, scale[0],
                 options == null ? MODE_WITH_SHADOW : options.mGenerationMode);
 
@@ -251,10 +251,10 @@ public class BaseIconFactory implements AutoCloseable {
                 ? options.mExtractedColor : mColorExtractor.findDominantColorByHue(bitmap);
         BitmapInfo info = BitmapInfo.of(bitmap, color);
 
-        if (icon instanceof BitmapInfo.Extender extender) {
+        if (tempIcon instanceof BitmapInfo.Extender extender) {
             info = extender.getExtendedInfo(bitmap, color, this, scale[0]);
         } else if (IconProvider.ATLEAST_T && mMonoIconEnabled) {
-            Drawable mono = getMonochromeDrawable(icon);
+            Drawable mono = getMonochromeDrawable(tempIcon);
             if (mono != null) {
                 info.setMonoIcon(createIconBitmap(mono, scale[0], MODE_ALPHA), this);
             }
