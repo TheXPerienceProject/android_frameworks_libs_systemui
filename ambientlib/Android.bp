@@ -1,4 +1,4 @@
-// Copyright (C) 2024 The Android Open Source Project
+// Copyright (C) 2025 The Android Open Source Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,30 +13,31 @@
 // limitations under the License.
 
 package {
-    default_team: "trendy_team_motion",
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
-filegroup {
-    name: "mechanics-srcs",
+android_library {
+    name: "ambientlib",
+    manifest: "AndroidManifest.xml",
+    sdk_version: "current",
+    // TODO(b/391934208): Update min_sdk_version to 35
+    min_sdk_version: "31",
     srcs: [
         "src/**/*.kt",
     ],
-}
-
-android_library {
-    name: "mechanics",
-    manifest: "AndroidManifest.xml",
-    sdk_version: "system_current",
-    min_sdk_version: "current",
     static_libs: [
-        "androidx.compose.runtime_runtime",
-        "androidx.compose.material3_material3",
-        "androidx.compose.ui_ui-util",
-        "androidx.compose.foundation_foundation-layout",
-    ],
-    srcs: [
-        ":mechanics-srcs",
+        "androidx.core_core-ktx",
+        "androidx.annotation_annotation",
+        "androidx.appsearch_appsearch",
+        "androidx.appsearch_appsearch-builtin-types",
+        "androidx.appsearch_appsearch-platform-storage",
+        "androidx.concurrent_concurrent-futures-ktx",
+        "guava",
+        "kotlin-stdlib",
+        "kotlinx_coroutines",
+        "kotlinx-coroutines-android",
+        "kotlinx-coroutines-core",
+        "kotlinx_coroutines_guava",
     ],
     kotlincflags: ["-Xjvm-default=all"],
 }
