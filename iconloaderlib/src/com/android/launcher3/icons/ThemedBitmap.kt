@@ -32,6 +32,8 @@ interface ThemedBitmap {
 
 interface IconThemeController {
 
+    val themeID: String
+
     fun createThemedBitmap(
         icon: AdaptiveIconDrawable,
         info: BitmapInfo,
@@ -57,4 +59,5 @@ data class SourceHint(
     val key: ComponentKey,
     val logic: CachingLogic<*>,
     val freshnessId: String? = null,
+    val isFileDrawable: Boolean = false,
 )

@@ -551,7 +551,8 @@ constructor(
                             data = monoIconData,
                             info = entry.bitmap,
                             factory = factory,
-                            sourceHint = SourceHint(cacheKey, logic),
+                            sourceHint =
+                                SourceHint(cacheKey, logic, c.getString(INDEX_FRESHNESS_ID)),
                         )
                 }
             }
@@ -640,7 +641,7 @@ constructor(
             ComponentKey(ComponentName(packageName, packageName + EMPTY_CLASS_NAME), user)
 
         // Ensures themed bitmaps in the icon cache are invalidated
-        @JvmField val RELEASE_VERSION = if (Flags.forceMonochromeAppIcons()) 6 else 5
+        @JvmField val RELEASE_VERSION = if (Flags.forceMonochromeAppIcons()) 8 else 7
 
         @JvmField val TABLE_NAME = "icons"
         @JvmField val COLUMN_ROWID = "rowid"
@@ -659,9 +660,10 @@ constructor(
 
         @JvmField
         val COLUMNS_HIGH_RES =
-            COLUMNS_LOW_RES.copyOf(COLUMNS_LOW_RES.size + 2).apply {
-                this[size - 2] = COLUMN_ICON
-                this[size - 1] = COLUMN_MONO_ICON
+            COLUMNS_LOW_RES.copyOf(COLUMNS_LOW_RES.size + 3).apply {
+                this[size - 3] = COLUMN_ICON
+                this[size - 2] = COLUMN_MONO_ICON
+                this[size - 1] = COLUMN_FRESHNESS_ID
             }
 
         @JvmField val INDEX_TITLE = COLUMNS_HIGH_RES.indexOf(COLUMN_LABEL)
@@ -669,6 +671,7 @@ constructor(
         @JvmField val INDEX_FLAGS = COLUMNS_HIGH_RES.indexOf(COLUMN_FLAGS)
         @JvmField val INDEX_ICON = COLUMNS_HIGH_RES.indexOf(COLUMN_ICON)
         @JvmField val INDEX_MONO_ICON = COLUMNS_HIGH_RES.indexOf(COLUMN_MONO_ICON)
+        @JvmField val INDEX_FRESHNESS_ID = COLUMNS_HIGH_RES.indexOf(COLUMN_FRESHNESS_ID)
 
         @JvmStatic
         fun CacheLookupFlag.toLookupColumns() =
