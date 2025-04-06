@@ -464,8 +464,10 @@ constructor(
                 }
             }
 
+            val shouldAddToCache =
+                !(lookupFlags.skipAddToMemCache() && Flags.restoreArchivedAppIconsFromDb())
             // Only add a filled-out entry to the cache
-            if (entryUpdated) {
+            if (entryUpdated && shouldAddToCache) {
                 cache[cacheKey] = entry
             }
         }
@@ -641,7 +643,7 @@ constructor(
             ComponentKey(ComponentName(packageName, packageName + EMPTY_CLASS_NAME), user)
 
         // Ensures themed bitmaps in the icon cache are invalidated
-        @JvmField val RELEASE_VERSION = if (Flags.forceMonochromeAppIcons()) 8 else 7
+        @JvmField val RELEASE_VERSION = if (Flags.forceMonochromeAppIcons()) 10 else 9
 
         @JvmField val TABLE_NAME = "icons"
         @JvmField val COLUMN_ROWID = "rowid"

@@ -129,9 +129,49 @@ flag {
     bug: "334125919"
 }
 
+
+flag {
+    name: "use_preferred_image_editor"
+    namespace: "systemui"
+    description: "Prefer the editor in config_preferredScreenshotEditor if component is present/enabled on the system"
+    bug: "391401141"
+}
+
 flag {
     name: "enable_lpp_squeeze_effect"
     namespace: "systemui"
     description: "Enables squeeze effect on power button long press launching Gemini"
     bug: "396099245"
+}
+
+flag {
+  name: "cursor_hot_corner"
+  namespace: "systemui"
+  description: "Enables hot corner navigation by cursor"
+  bug: "397182595"
+}
+
+flag {
+    name: "smartspace_ui_update"
+    namespace: "systemui"
+    description: "Update Smartspace UI"
+    bug: "389741821"
+}
+
+flag {
+    name: "smartspace_ui_update_resources"
+    namespace: "systemui"
+    description: "Read-only flag for updating resources for Smartspace UI"
+    bug: "389741821"
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "smartspace_remoteviews_intent_handler"
+    namespace: "systemui"
+    description: "Enables Smartspace RemoteViews intent handling on lockscreen"
+    bug: "399416038"
+    metadata {
+         purpose: PURPOSE_BUGFIX
+    }
 }

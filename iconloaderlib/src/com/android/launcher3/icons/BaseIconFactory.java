@@ -84,9 +84,6 @@ public class BaseIconFactory implements AutoCloseable {
     @NonNull
     private final PackageManager mPm;
 
-    @NonNull
-    private final ColorExtractor mColorExtractor;
-
     protected final int mFullResIconDpi;
     protected final int mIconBitmapSize;
 
@@ -102,6 +99,8 @@ public class BaseIconFactory implements AutoCloseable {
 
     private static int PLACEHOLDER_BACKGROUND_COLOR = Color.rgb(245, 245, 245);
 
+    private final boolean mShouldForceThemeIcon;
+
     protected BaseIconFactory(Context context, int fullResIconDpi, int iconBitmapSize,
             boolean unused) {
         this(context, fullResIconDpi, iconBitmapSize);
@@ -113,11 +112,13 @@ public class BaseIconFactory implements AutoCloseable {
         mIconBitmapSize = iconBitmapSize;
 
         mPm = mContext.getPackageManager();
-        mColorExtractor = new ColorExtractor();
 
         mCanvas = new Canvas();
         mCanvas.setDrawFilter(new PaintFlagsDrawFilter(DITHER_FLAG, FILTER_BITMAP_FLAG));
         clear();
+
+        mShouldForceThemeIcon = mContext.getResources().getBoolean(
+                R.bool.enable_forced_themed_icon);
     }
 
     protected void clear() {
@@ -179,7 +180,7 @@ public class BaseIconFactory implements AutoCloseable {
             icon = createIconBitmap(new BitmapDrawable(mContext.getResources(), icon), 1f);
         }
 
-        return BitmapInfo.of(icon, mColorExtractor.findDominantColorByHue(icon));
+        return BitmapInfo.of(icon, ColorExtractor.findDominantColorByHue(icon));
     }
 
     /**
@@ -225,14 +226,20 @@ public class BaseIconFactory implements AutoCloseable {
                 options == null ? MODE_WITH_SHADOW : options.mGenerationMode);
 
         int color = (options != null && options.mExtractedColor != null)
-                ? options.mExtractedColor : mColorExtractor.findDominantColorByHue(bitmap);
+                ? options.mExtractedColor : ColorExtractor.findDominantColorByHue(bitmap);
         BitmapInfo info = BitmapInfo.of(bitmap, color);
 
         if (adaptiveIcon instanceof Extender extender) {
             info = extender.getExtendedInfo(bitmap, color, this, scale[0]);
         } else if (IconProvider.ATLEAST_T && mThemeController != null && adaptiveIcon != null) {
-            info.setThemedBitmap(mThemeController.createThemedBitmap(
-                    adaptiveIcon, info, this, options == null ? null : options.mSourceHint));
+            info.setThemedBitmap(
+                    mThemeController.createThemedBitmap(
+                        adaptiveIcon,
+                        info,
+                        this,
+                        options == null ? null : options.mSourceHint
+                    )
+            );
         }
         info = info.withFlags(getBitmapFlagOp(options));
         return info;
@@ -257,6 +264,13 @@ public class BaseIconFactory implements AutoCloseable {
         return op;
     }
 
+    /**
+     * @return True if forced theme icon is enabled
+     */
+    public boolean shouldForceThemeIcon() {
+        return mShouldForceThemeIcon;
+    }
+
     @NonNull
     protected UserIconInfo getUserInfo(@NonNull UserHandle user) {
         int key = user.hashCode();
@@ -276,8 +290,12 @@ public class BaseIconFactory implements AutoCloseable {
     }
 
     @NonNull
-    protected Path getShapePath(AdaptiveIconDrawable drawable, Rect iconBounds) {
+    public Path getShapePath(AdaptiveIconDrawable drawable, Rect iconBounds) {
         return drawable.getIconMask();
+    }
+
+    public float getIconScale() {
+        return 1f;
     }
 
     @NonNull
